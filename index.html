@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>WAEC CBT | Biology SS2 (Hybrid)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', 'Poppins', 'Roboto', sans-serif;
+            background: #eef2f5;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .waec-container {
+            width: 100%;
+            max-width: 1400px;
+            margin: 20px;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 25px 45px -12px rgba(0,0,0,0.25);
+            overflow: hidden;
+        }
+        .waec-header {
+            background: linear-gradient(135deg, #0f3b2c 0%, #1b5e3f 100%);
+            color: white;
+            padding: 1.2rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .timer-badge {
+            background: #000000aa;
+            backdrop-filter: blur(4px);
+            padding: 8px 20px;
+            border-radius: 60px;
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            font-size: 1.5rem;
+            letter-spacing: 2px;
+        }
+        .content-pane {
+            padding: 2rem;
+            min-height: 550px;
+        }
+        button, .btn {
+            background: #1e5a3c;
+            border: none;
+            padding: 10px 24px;
+            border-radius: 40px;
+            font-weight: 600;
+            color: white;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 0.9rem;
+        }
+        button:hover { background: #0f3b2c; transform: scale(0.97); }
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #1e5a3c;
+            color: #1e5a3c;
+        }
+        .btn-outline:hover { background: #1e5a3c; color: white; }
+        .btn-danger { background: #b91c1c; }
+        .btn-danger:hover { background: #991b1b; }
+        .btn-success { background: #15803d; }
+        .card {
+            background: #fefefe;
+            border-radius: 28px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            border: 1px solid #e4e7eb;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 24px;
+            border: 1px solid #cbd5e1;
+            font-size: 1rem;
+            margin-top: 6px;
+        }
+        .flex-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .question-nav {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .q-circle {
+            width: 46px;
+            height: 46px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f1f5f9;
+            border-radius: 50%;
+            font-weight: bold;
+            cursor: pointer;
+            border: 2px solid transparent;
+        }
+        .q-circle.active {
+            background: #1e5a3c;
+            color: white;
+            border: 2px solid #ffc107;
+        }
+        .q-circle.flagged {
+            background: #ffc107;
+            color: #1e2a2a;
+        }
+        .q-circle.answered {
+            background: #4c9f70;
+            color: white;
+        }
+        .instruction-box {
+            background: #fef9e3;
+            border-left: 6px solid #ffc107;
+            padding: 1.5rem;
+            border-radius: 24px;
+            white-space: pre-wrap;
+        }
+        .option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 16px;
+            background: #f9fafb;
+            border-radius: 60px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            border: 1px solid #e2e8f0;
+        }
+        .option.selected {
+            background: #dcfce7;
+            border-color: #15803d;
+        }
+        .option input {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            cursor: pointer;
+        }
+        .question-image {
+            max-width: 100%;
+            max-height: 250px;
+            border-radius: 20px;
+            margin: 15px 0;
+            border: 1px solid #ddd;
+        }
+        hr { margin: 15px 0; }
+        .student-item {
+            background: #f9f9fb;
+            border-radius: 20px;
+            padding: 12px 16px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .score-row {
+            background: #eef2ff;
+            padding: 8px 12px;
+            border-radius: 20px;
+            margin-bottom: 8px;
+        }
+        .theory-subq {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 3px solid #ffc107;
+        }
+        @media (max-width: 700px) {
+            .content-pane { padding: 1rem; }
+            .option { flex-wrap: wrap; }
+        }
+    </style>
+</head>
+<body>
+<div id="appRoot" class="waec-container">
+    <div class="waec-header">
+        <div>
+            <h2>🏛️ GSSS CB-WASSCE</h2>
+            <p>Biology SS2 | Hybrid (Objective + Theory) | WAEC Standard</p>
+        </div>
+        <div id="globalTimer" class="timer-badge" style="display: none;">--:--:--</div>
+    </div>
+    <div class="content-pane" id="mainContent"></div>
+</div>
+
+<script>
+    // ======================== DEFAULT DATA (with sub-questions for theory) ========================
+    const DEFAULT_OBJ_QUESTIONS = [
+        { id:1, text:"Which of the following is an abiotic component of an ecosystem?", options:["Bacteria","Fungi","Water","Plants"], answer:2, image:null },
+        { id:2, text:"The gradual replacement of one community by another is called?", options:["Succession","Pollination","Eutrophication","Fragmentation"], answer:0, image:null },
+        { id:3, text:"Which gas is the main cause of acid rain?", options:["CO2","SO2","O2","N2"], answer:1, image:null },
+        { id:4, text:"Conservation of natural resources means?", options:["Using them wastefully","Protecting and managing wisely","Exploiting them fully","Ignoring them"], answer:1, image:null },
+        { id:5, text:"Which pest attacks maize grains in storage?", options:["Weevil","Aphid","Grasshopper","Termite"], answer:0, image:null },
+        { id:6, text:"The organ that produces eggs in vertebrates is the?", options:["Ovary","Testis","Uterus","Oviduct"], answer:0, image:null },
+        { id:7, text:"In plants, the male reproductive organ is the?", options:["Stamen","Pistil","Ovule","Sepal"], answer:0, image:null },
+        { id:8, text:"Which of these is a renewable resource?", options:["Coal","Petroleum","Solar energy","Natural gas"], answer:2, image:null },
+        { id:9, text:"The process by which water changes from liquid to vapour is called?", options:["Condensation","Evaporation","Precipitation","Transpiration"], answer:1, image:null },
+        { id:10, text:"Which disease is caused by a fungus in crops?", options:["Rust","Blight","Mosaic","Wilt"], answer:0, image:null },
+        { id:11, text:"The part of the flower that develops into a fruit is the?", options:["Ovary","Anther","Petal","Sepal"], answer:0, image:null },
+        { id:12, text:"Which of the following is a method of controlling pollution?", options:["Deforestation","Recycling","Burning waste","Using CFCs"], answer:1, image:null },
+        { id:13, text:"The ecological zone with the highest species diversity is?", options:["Desert","Tropical rainforest","Savanna","Tundra"], answer:1, image:null },
+        { id:14, text:"Which of these is a vector of malaria?", options:["Housefly","Mosquito","Tsetse fly","Cockroach"], answer:1, image:null },
+        { id:15, text:"The process of embryo development is called?", options:["Gametogenesis","Fertilization","Embryogenesis","Ovulation"], answer:2, image:null },
+        { id:16, text:"Which hormone regulates blood sugar level?", options:["Insulin","Estrogen","Testosterone","Adrenaline"], answer:0, image:null },
+        { id:17, text:"Which of the following is a biotic component?", options:["Soil","Water","Bacteria","Air"], answer:2, image:null },
+        { id:18, text:"The term 'biodegradable' refers to substances that?", options:["Cannot decompose","Decompose by microorganisms","Are toxic","Are synthetic"], answer:1, image:null },
+        { id:19, text:"Which part of the male reproductive system produces sperm?", options:["Vas deferens","Seminal vesicle","Testes","Prostate"], answer:2, image:null },
+        { id:20, text:"Pollination is the transfer of pollen from?", options:["Anther to stigma","Stigma to ovary","Ovary to ovule","Petal to sepal"], answer:0, image:null },
+        { id:21, text:"An example of a national park in Nigeria is?", options:["Yankari","Kainji","Lekki","Oguta"], answer:0, image:null },
+        { id:22, text:"The continuous circulation of carbon in nature is called?", options:["Carbon cycle","Water cycle","Nitrogen cycle","Oxygen cycle"], answer:0, image:null },
+        { id:23, text:"Which of these is not a greenhouse gas?", options:["CO2","Methane","Oxygen","Nitrous oxide"], answer:2, image:null },
+        { id:24, text:"A pest that attacks cotton bolls is?", options:["Bollworm","Aphid","Locust","Grasshopper"], answer:0, image:null },
+        { id:25, text:"The structure that attaches the ovule to the ovary wall is?", options:["Funicle","Placenta","Hilum","Micropyle"], answer:0, image:null },
+        { id:26, text:"Which of these is a method of in-situ conservation?", options:["Zoo","Botanical garden","National park","Seed bank"], answer:2, image:null },
+        { id:27, text:"Eutrophication leads to?", options:["Oxygen depletion","Increased biodiversity","Clean water","Reduced algae"], answer:0, image:null },
+        { id:28, text:"The release of industrial waste into water bodies causes?", options:["Air pollution","Water pollution","Soil pollution","Noise pollution"], answer:1, image:null },
+        { id:29, text:"The function of the scrotum in mammals is to?", options:["Produce sperm","Store sperm","Regulate temperature","Secrete hormones"], answer:2, image:null },
+        { id:30, text:"The female gamete in flowering plants is the?", options:["Egg cell","Pollen grain","Ovule","Embryo sac"], answer:0, image:null },
+        { id:31, text:"Which of the following is a non-renewable resource?", options:["Biomass","Wind","Natural gas","Hydropower"], answer:2, image:null },
+        { id:32, text:"The greenhouse effect is caused by?", options:["Ozone layer","CFCs","CO2 and methane","Dust particles"], answer:2, image:null },
+        { id:33, text:"Which of these is a fungal disease of plants?", options:["Powdery mildew","Bacterial blight","Mosaic virus","Nematode rot"], answer:0, image:null },
+        { id:34, text:"The part of the flower that receives pollen is the?", options:["Stigma","Style","Ovary","Anther"], answer:0, image:null },
+        { id:35, text:"In humans, fertilization occurs in the?", options:["Ovary","Uterus","Fallopian tube","Vagina"], answer:2, image:null },
+        { id:36, text:"Which of these is a biological method of pest control?", options:["Use of pesticides","Use of predators","Burning","Herbicides"], answer:1, image:null },
+        { id:37, text:"The process by which plants lose water vapour is?", options:["Guttation","Transpiration","Evaporation","Condensation"], answer:1, image:null },
+        { id:38, text:"Which of the following is an example of a climax community?", options:["Pond","Forest","Grassland","Desert"], answer:1, image:null },
+        { id:39, text:"The male gamete in animals is called?", options:["Sperm","Egg","Zygote","Embryo"], answer:0, image:null },
+        { id:40, text:"The part of the seed that develops into the shoot is the?", options:["Radicle","Plumule","Cotyledon","Testa"], answer:1, image:null },
+        { id:41, text:"Which of these is an effect of deforestation?", options:["Increased rainfall","Soil erosion","Improved air quality","More wildlife"], answer:1, image:null },
+        { id:42, text:"The layer of the atmosphere that contains ozone is the?", options:["Troposphere","Stratosphere","Mesosphere","Thermosphere"], answer:1, image:null },
+        { id:43, text:"A disease caused by nematodes in crops is?", options:["Root knot","Smut","Rust","Blight"], answer:0, image:null },
+        { id:44, text:"The process of seed formation after fertilization is called?", options:["Fruit set","Germination","Pollination","Dispersal"], answer:0, image:null },
+        { id:45, text:"Which of the following is a part of the female reproductive system in humans?", options:["Vas deferens","Prostate","Fallopian tube","Epididymis"], answer:2, image:null },
+        { id:46, text:"The conversion of atmospheric nitrogen into usable form is called?", options:["Nitrogen fixation","Denitrification","Nitrification","Ammonification"], answer:0, image:null },
+        { id:47, text:"Which of these is a pollutant from vehicle exhaust?", options:["Lead","CO","SO2","All of the above"], answer:3, image:null },
+        { id:48, text:"The function of the placenta in mammals is to?", options:["Protect the fetus","Exchange nutrients","Produce milk","Hold the fetus"], answer:1, image:null },
+        { id:49, text:"The transfer of pollen by insects is called?", options:["Anemophily","Hydrophily","Entomophily","Zoophily"], answer:2, image:null },
+        { id:50, text:"Which of the following is a method of conserving water?", options:["Dam construction","Borehole drilling","Rainwater harvesting","All of the above"], answer:3, image:null }
+    ];
+
+    // Theory questions: each with main text and an array of sub-questions (a,b,c)
+    const DEFAULT_THEORY_QUESTIONS = [
+        { id:1, text:"Ecological Management", subQuestions:["a) Define ecological succession and explain two types.","b) Describe the concept of carrying capacity.","c) List three human activities that disrupt ecological balance."], image:null },
+        { id:2, text:"Pollution", subQuestions:["a) What is air pollution? State three causes.","b) Explain the term 'biomagnification' with an example.","c) Suggest two ways to control water pollution."], image:null },
+        { id:3, text:"Conservation of Natural Resources", subQuestions:["a) Define natural resource conservation.","b) Differentiate between in-situ and ex-situ conservation.","c) Give three reasons why we should conserve wildlife."], image:null },
+        { id:4, text:"Pests and Diseases of Crops", subQuestions:["a) What is a pest? Name three common crop pests.","b) Explain the difference between a pest and a disease.","c) Describe one biological and one chemical method of pest control."], image:null },
+        { id:5, text:"Reproductive System in Vertebrates", subQuestions:["a) Draw and label the human male reproductive system. (Describe in text)","b) State the functions of the following: testis, oviduct, uterus.","c) Explain the process of fertilization in mammals."], image:null },
+        { id:6, text:"Reproductive System in Plants", subQuestions:["a) Describe the structure of a typical flower.","b) Explain double fertilization in angiosperms.","c) What is the role of the endosperm?"], image:null }
+    ];
+
+    // Storage keys
+    const STORAGE = {
+        STUDENTS: 'bio_hybrid_students',
+        OBJ_QS: 'bio_hybrid_obj_questions',
+        THEORY_QS: 'bio_hybrid_theory_questions',
+        SCORES: 'bio_hybrid_scores',
+        INSTRUCTIONS_OBJ: 'bio_hybrid_inst_obj',
+        INSTRUCTIONS_THEORY: 'bio_hybrid_inst_theory'
+    };
+
+    function initStorage() {
+        if (!localStorage.getItem(STORAGE.STUDENTS)) localStorage.setItem(STORAGE.STUDENTS, JSON.stringify([]));
+        if (!localStorage.getItem(STORAGE.OBJ_QS)) localStorage.setItem(STORAGE.OBJ_QS, JSON.stringify(DEFAULT_OBJ_QUESTIONS));
+        if (!localStorage.getItem(STORAGE.THEORY_QS)) localStorage.setItem(STORAGE.THEORY_QS, JSON.stringify(DEFAULT_THEORY_QUESTIONS));
+        if (!localStorage.getItem(STORAGE.SCORES)) localStorage.setItem(STORAGE.SCORES, JSON.stringify([]));
+        if (!localStorage.getItem(STORAGE.INSTRUCTIONS_OBJ)) localStorage.setItem(STORAGE.INSTRUCTIONS_OBJ,
+            "BIOLOGY (OBJECTIVE) INSTRUCTIONS\n\n1. This paper contains 50 multiple-choice questions.\n2. Each question has four options A-D. Choose the best answer.\n3. Time allowed: 40 minutes.\n4. Do not refresh or leave the screen – strict monitoring.\n5. Fullscreen mode is mandatory.\n\nClick on your answer. You can navigate and flag questions.\n\nBEST OF LUCK!");
+        if (!localStorage.getItem(STORAGE.INSTRUCTIONS_THEORY)) localStorage.setItem(STORAGE.INSTRUCTIONS_THEORY,
+            "BIOLOGY (THEORY) INSTRUCTIONS\n\n1. This paper contains 6 questions. Each question has parts (a), (b), (c).\n2. You are required to answer ANY FOUR (4) questions.\n3. Write your answers on the separate answer booklet provided.\n4. Do not type answers on screen.\n5. Time allowed: 60 minutes.\n6. Use the Next/Previous buttons to read all questions.\n7. After the timer expires, the exam will auto-submit.\n\nIndicate question numbers clearly on your answer sheet.\n\nGOOD LUCK!");
+    }
+    initStorage();
+
+    function getStudents() { return JSON.parse(localStorage.getItem(STORAGE.STUDENTS)); }
+    function saveStudents(s) { localStorage.setItem(STORAGE.STUDENTS, JSON.stringify(s)); }
+    function getObjQuestions() { return JSON.parse(localStorage.getItem(STORAGE.OBJ_QS)); }
+    function saveObjQuestions(q) { localStorage.setItem(STORAGE.OBJ_QS, JSON.stringify(q)); }
+    function getTheoryQuestions() { return JSON.parse(localStorage.getItem(STORAGE.THEORY_QS)); }
+    function saveTheoryQuestions(t) { localStorage.setItem(STORAGE.THEORY_QS, JSON.stringify(t)); }
+    function getObjInstructions() { return localStorage.getItem(STORAGE.INSTRUCTIONS_OBJ); }
+    function getTheoryInstructions() { return localStorage.getItem(STORAGE.INSTRUCTIONS_THEORY); }
+    function saveScores(scores) { localStorage.setItem(STORAGE.SCORES, JSON.stringify(scores)); }
+    function getScores() { return JSON.parse(localStorage.getItem(STORAGE.SCORES)); }
+
+    // Helper: shuffle array (Fisher-Yates)
+    function shuffleArray(arr) {
+        for (let i = arr.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [arr[i], arr[j]] = [arr[j], arr[i]];
+        }
+        return arr;
+    }
+    // Global state
+    let currentView = "login";
+    let currentStudent = null;
+    let shuffledObjQuestions = [];
+    let objAnswers = [];
+    let flaggedObj = [];
+    let visitedObj = [];
+    let currentObjIndex = 0;
+    let objRemainingSec = 2400; // 40 minutes
+    let theoryRemainingSec = 3600; // 60 minutes
+    let instructionRemaining = 60;
+    let examInterval = null, instructionInterval = null;
+    let examActive = false, examSubmitted = false;
+    let objCompleted = false;
+    let shuffledTheoryQuestions = [];
+    let currentTheoryIndex = 0;
+    let antiCheatCleanup = null;
+
+    const mainDiv = document.getElementById('mainContent');
+    const timerDiv = document.getElementById('globalTimer');
+
+    function escapeHtml(str) { if(!str) return ''; return str.replace(/[&<>]/g, m=> m==='&'? '&amp;': m==='<'? '&lt;': '&gt;'); }
+
+    // ------------------------------- LOGIN / ADMIN ---------------------------------
+    function renderLogin() {
+        clearAllIntervals();
+        examActive = false;
+        timerDiv.style.display = 'none';
+        currentView = "login";
+        mainDiv.innerHTML = `
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h2>🔐 BIOLOGY CBT PORTAL</h2>
+                <p style="margin:15px 0;">Enter credentials (provided by admin)</p>
+                <label>Full Name</label>
+                <input type="text" id="studentName" placeholder="e.g., Adebayo Tolu" autocomplete="off">
+                <label style="margin-top:15px;">Exam Password</label>
+                <input type="password" id="studentPwd" placeholder="Unique password">
+                <button id="loginStudentBtn" style="margin-top:25px; width:100%;">Start Examination</button>
+                <hr>
+                <button id="gotoAdminBtn" class="btn-outline" style="width:100%;">🔧 Admin Portal</button>
+                <p style="margin-top:15px; font-size:12px;">Admin: admin12#$</p>
+            </div>
+        `;
+        document.getElementById('loginStudentBtn').addEventListener('click', () => {
+            const name = document.getElementById('studentName').value.trim();
+            const pwd = document.getElementById('studentPwd').value;
+            const students = getStudents();
+            const found = students.find(s => s.name.toLowerCase() === name.toLowerCase() && s.password === pwd);
+            if (found) {
+                const scores = getScores();
+                const alreadyTaken = scores.some(s => s.studentId === found.id);
+                if (alreadyTaken) {
+                    alert("❌ You have already taken this exam. Only the admin can reset your record individually.");
+                    return;
+                }
+                currentStudent = found;
+                startObjInstruction();
+            } else alert("❌ Invalid credentials or exam already taken.");
+        });
+        document.getElementById('gotoAdminBtn').addEventListener('click', () => showAdminAuth());
+    }
+
+    function showAdminAuth() {
+        mainDiv.innerHTML = `
+            <div class="card" style="max-width:450px; margin:0 auto;">
+                <h2>🔒 Admin Login</h2>
+                <input type="password" id="adminPass" placeholder="Admin password">
+                <button id="adminAuthBtn" style="margin-top:20px;">Login</button>
+            </div>
+        `;
+        document.getElementById('adminAuthBtn').addEventListener('click', () => {
+            if (document.getElementById('adminPass').value === 'enigma123') renderAdminPanel();
+            else alert("Wrong admin password!");
+        });
+    }
+
+    function renderAdminPanel() {
+        timerDiv.style.display = 'none';
+        currentView = "admin";
+        const students = getStudents();
+        const scores = getScores();
+        mainDiv.innerHTML = `
+            <div class="flex-between"><h2>📋 Admin Dashboard (Biology Hybrid)</h2><button id="logoutAdminBtn" class="btn-danger">Logout</button></div>
+            <div class="card"><h3>👥 Manage Students</h3><div class="flex-between"><input id="studentNameInput" placeholder="Full name" style="flex:2"><input id="studentPwdInput" placeholder="Password" style="flex:1"><button id="addStudentBtn" class="btn-success">+ Add</button></div><div id="studentsList" style="margin-top:20px;"></div></div>
+            <div class="card"><h3>📊 Objective Scores (Students only)</h3><div id="scoresList"></div><div class="flex-between" style="margin-top:10px;"><button id="resetStudentScoreBtn" class="btn-outline">🔄 Reset Specific Student (Allow retake)</button><button id="resetAllScoresBtn" class="btn-outline">⚠️ Reset All Scores</button></div></div>
+            <div class="card"><h3>📚 Edit Objective Questions (50) - with images</h3><button id="manageObjBtn" class="btn-success">Manage Objective Questions</button></div>
+            <div class="card"><h3>📚 Edit Theory Questions (6) - with sub-questions & images</h3><button id="manageTheoryBtn" class="btn-success">Manage Theory Questions</button></div>
+            <div class="card"><h3>📜 Objective Instructions</h3><textarea id="objInstEditor" rows="4">${escapeHtml(getObjInstructions())}</textarea><button id="saveObjInstBtn">Save</button></div>
+            <div class="card"><h3>📜 Theory Instructions</h3><textarea id="theoryInstEditor" rows="4">${escapeHtml(getTheoryInstructions())}</textarea><button id="saveTheoryInstBtn">Save</button></div>
+        `;
+
+        function refreshStudents() {
+            const container = document.getElementById('studentsList');
+            if(!container) return;
+            const list = getStudents();
+            if(list.length===0) { container.innerHTML='<p>No students yet.</p>'; return; }
+            container.innerHTML = list.map((s,idx)=>`<div class="student-item"><div><strong>${escapeHtml(s.name)}</strong> (pwd: ${s.password})</div><button class="delStud" data-idx="${idx}" style="background:#b91c1c;">Delete</button></div>`).join('');
+            document.querySelectorAll('.delStud').forEach(btn=>{
+                btn.addEventListener('click',()=>{
+                    let idx = parseInt(btn.dataset.idx);
+                    let all = getStudents();
+                    const studentId = all[idx].id;
+                    if(confirm(`Delete ${all[idx].name}? Also remove their score record.`)){
+                        all.splice(idx,1);
+                        saveStudents(all);
+                        let allScores = getScores();
+                        allScores = allScores.filter(s => s.studentId !== studentId);
+                        saveScores(allScores);
+                        refreshStudents();
+                        refreshScores();
+                    }
+                });
+            });
+        }
+        function refreshScores() {
+            const container = document.getElementById('scoresList');
+            if(!container) return;
+            const allScores = getScores();
+            container.innerHTML = allScores.length===0 ? '<p>No submissions yet.</p>' : allScores.map(s=>`<div class="score-row"><strong>${escapeHtml(s.studentName)}</strong> | Score: ${s.objectiveScore}/50 | ${new Date(s.timestamp).toLocaleString()}</div>`).join('');
+        }
+        document.getElementById('addStudentBtn').addEventListener('click',()=>{
+            let name = document.getElementById('studentNameInput').value.trim();
+            let pwd = document.getElementById('studentPwdInput').value.trim();
+            if(!name || !pwd) { alert("Both required"); return; }
+            let all = getStudents();
+            if(all.some(s=>s.name.toLowerCase()===name.toLowerCase())){ alert("Student exists"); return; }
+            all.push({id:Date.now(), name, password:pwd});
+            saveStudents(all);
+            document.getElementById('studentNameInput').value='';
+            document.getElementById('studentPwdInput').value='';
+            refreshStudents();
+        });
+        document.getElementById('resetStudentScoreBtn').addEventListener('click',()=>{
+            let studentName = prompt("Enter the exact student name to reset (allow retake):");
+            if(!studentName) return;
+            let allScores = getScores();
+            let found = false;
+            allScores = allScores.filter(s => s.studentName.toLowerCase() !== studentName.toLowerCase());
+            if(allScores.length !== getScores().length) found = true;
+            saveScores(allScores);
+            if(found) alert(`Reset scores for "${studentName}". They can now retake.`);
+            else alert("No scores found for that student name.");
+            refreshScores();
+        });
+        document.getElementById('resetAllScoresBtn').addEventListener('click',()=>{
+            if(confirm("Reset ALL student scores? All students can retake.")){
+                saveScores([]);
+                refreshScores();
+                alert("All scores reset.");
+            }
+        });
+        // Manage Objective Questions (with image upload)
+        document.getElementById('manageObjBtn').addEventListener('click',()=>{
+            let qs = getObjQuestions();
+            let editorHtml = `<div><h3>Edit Objective Questions</h3><div id="objEditorList"></div><button id="addNewObjBtn">+ Add New Objective Question</button><button id="closeObjEditor" class="btn-outline">Close</button></div>`;
+            let modal = document.createElement('div');
+            modal.style.position='fixed'; modal.style.top='0'; modal.style.left='0'; modal.style.width='100%'; modal.style.height='100%'; modal.style.background='rgba(0,0,0,0.8)'; modal.style.zIndex='10000'; modal.style.overflow='auto'; modal.style.padding='40px';
+            modal.innerHTML = `<div style="background:white; max-width:900px; margin:auto; border-radius:28px; padding:20px;">${editorHtml}</div>`;
+            document.body.appendChild(modal);
+            function renderObjList(){
+                const container = modal.querySelector('#objEditorList');
+                let currentQs = getObjQuestions();
+                container.innerHTML = currentQs.map((q,idx)=>`
+                    <div style="border:1px solid #ccc; margin-bottom:15px; padding:12px; border-radius:20px;">
+                        <strong>Q${idx+1}:</strong> <input type="text" id="objText_${idx}" value="${escapeHtml(q.text)}" style="width:100%"><br>
+                        Options: <br>
+                        A: <input type="text" id="objOpt0_${idx}" value="${escapeHtml(q.options[0])}" style="width:90%"><br>
+                        B: <input type="text" id="objOpt1_${idx}" value="${escapeHtml(q.options[1])}"><br>
+                        C: <input type="text" id="objOpt2_${idx}" value="${escapeHtml(q.options[2])}"><br>
+                        D: <input type="text" id="objOpt3_${idx}" value="${escapeHtml(q.options[3])}"><br>
+                        Correct Answer (0-3): <input type="number" id="objAns_${idx}" value="${q.answer}" min="0" max="3"><br>
+                        Image: ${q.image ? `<img src="${q.image}" style="max-height:80px;"><br>` : ''}
+                        <input type="file" id="objImg_${idx}" accept="image/*"> <button class="clearObjImg" data-idx="${idx}">Clear Image</button><br>
+                        <button class="saveObjBtn" data-idx="${idx}">Save</button> <button class="deleteObjBtn" data-idx="${idx}" style="background:#b91c1c;">Delete</button>
+                    </div>
+                `).join('');
+                // attach events
+                for(let i=0;i<currentQs.length;i++){
+                    modal.querySelector(`.saveObjBtn[data-idx="${i}"]`).addEventListener('click',()=>{
+                        let newText = modal.querySelector(`#objText_${i}`).value;
+                        let newOpts = [
+                            modal.querySelector(`#objOpt0_${i}`).value,
+                            modal.querySelector(`#objOpt1_${i}`).value,
+                            modal.querySelector(`#objOpt2_${i}`).value,
+                            modal.querySelector(`#objOpt3_${i}`).value
+                        ];
+                        let newAns = parseInt(modal.querySelector(`#objAns_${i}`).value);
+                        let fileInput = modal.querySelector(`#objImg_${i}`);
+                        let currentQsArr = getObjQuestions();
+                        if(fileInput.files.length>0){
+                            let reader = new FileReader();
+                            reader.onload = function(e){
+                                currentQsArr[i] = {...currentQsArr[i], text:newText, options:newOpts, answer:newAns, image:e.target.result};
+                                saveObjQuestions(currentQsArr);
+                                renderObjList();
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        } else {
+                            currentQsArr[i] = {...currentQsArr[i], text:newText, options:newOpts, answer:newAns};
+                            saveObjQuestions(currentQsArr);
+                            renderObjList();
+                        }
+                    });
+                    modal.querySelector(`.deleteObjBtn[data-idx="${i}"]`).addEventListener('click',()=>{
+                        let arr = getObjQuestions();
+                        arr.splice(i,1);
+                        saveObjQuestions(arr);
+                        renderObjList();
+                    });
+                    modal.querySelector(`.clearObjImg[data-idx="${i}"]`)?.addEventListener('click',()=>{
+                        let arr = getObjQuestions();
+                        arr[i].image = null;
+                        saveObjQuestions(arr);
+                        renderObjList();
+                    });
+                }
+            }
+            document.getElementById('addNewObjBtn').addEventListener('click',()=>{
+                let arr = getObjQuestions();
+                arr.push({ id:Date.now(), text:"New question", options:["A","B","C","D"], answer:0, image:null });
+                saveObjQuestions(arr);
+                renderObjList();
+            });
+            document.getElementById('closeObjEditor').addEventListener('click',()=>{ document.body.removeChild(modal); });
+            renderObjList();
+        });
+        // Manage Theory Questions (with sub-questions and image)
+        document.getElementById('manageTheoryBtn').addEventListener('click',()=>{
+            let theoryQs = getTheoryQuestions();
+            let editorHtml = `<div><h3>Edit Theory Questions (with sub-questions a,b,c)</h3><div id="theoryEditorList"></div><button id="addNewTheoryBtn">+ Add New Theory Question</button><button id="closeTheoryEditor" class="btn-outline">Close</button></div>`;
+            let modal = document.createElement('div');
+            modal.style.cssText = 'position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:10000; overflow:auto; padding:40px;';
+            modal.innerHTML = `<div style="background:white; max-width:900px; margin:auto; border-radius:28px; padding:20px;">${editorHtml}</div>`;
+            document.body.appendChild(modal);
+            function renderTheoryList(){
+                const container = modal.querySelector('#theoryEditorList');
+                let current = getTheoryQuestions();
+                container.innerHTML = current.map((q,idx)=>`
+                    <div style="border:1px solid #ccc; margin-bottom:20px; padding:12px;">
+                        <strong>Question ${idx+1} Title:</strong> <input type="text" id="theoryTitle_${idx}" value="${escapeHtml(q.text)}" style="width:100%"><br>
+                        <strong>Sub-questions:</strong><br>
+                        a) <input type="text" id="theorySubA_${idx}" value="${escapeHtml(q.subQuestions[0])}" style="width:100%"><br>
+                        b) <input type="text" id="theorySubB_${idx}" value="${escapeHtml(q.subQuestions[1])}" style="width:100%"><br>
+                        c) <input type="text" id="theorySubC_${idx}" value="${escapeHtml(q.subQuestions[2])}" style="width:100%"><br>
+                        Image: ${q.image ? `<img src="${q.image}" style="max-height:80px;"><br>` : ''}
+                        <input type="file" id="theoryImg_${idx}" accept="image/*"> <button class="clearTheoryImg" data-idx="${idx}">Clear Image</button><br>
+                        <button class="saveTheoryBtn" data-idx="${idx}">Save</button> <button class="deleteTheoryBtn" data-idx="${idx}" style="background:#b91c1c;">Delete</button>
+                    </div>
+                `).join('');
+                for(let i=0;i<current.length;i++){
+                    modal.querySelector(`.saveTheoryBtn[data-idx="${i}"]`).addEventListener('click',()=>{
+                        let newTitle = modal.querySelector(`#theoryTitle_${i}`).value;
+                        let newSubs = [
+                            modal.querySelector(`#theorySubA_${i}`).value,
+                            modal.querySelector(`#theorySubB_${i}`).value,
+                            modal.querySelector(`#theorySubC_${i}`).value
+                        ];
+                        let fileInput = modal.querySelector(`#theoryImg_${i}`);
+                        let allTheory = getTheoryQuestions();
+                        if(fileInput.files.length>0){
+                            let reader = new FileReader();
+                            reader.onload = function(e){
+                                allTheory[i] = {...allTheory[i], text:newTitle, subQuestions:newSubs, image:e.target.result};
+                                saveTheoryQuestions(allTheory);
+                                renderTheoryList();
+                            };
+                            reader.readAsDataURL(fileInput.files[0]);
+                        } else {
+                            allTheory[i] = {...allTheory[i], text:newTitle, subQuestions:newSubs};
+                            saveTheoryQuestions(allTheory);
+                            renderTheoryList();
+                        }
+                    });
+                    modal.querySelector(`.deleteTheoryBtn[data-idx="${i}"]`).addEventListener('click',()=>{
+                        let arr = getTheoryQuestions();
+                        arr.splice(i,1);
+                        saveTheoryQuestions(arr);
+                        renderTheoryList();
+                    });
+                    modal.querySelector(`.clearTheoryImg[data-idx="${i}"]`)?.addEventListener('click',()=>{
+                        let arr = getTheoryQuestions();
+                        arr[i].image = null;
+                        saveTheoryQuestions(arr);
+                        renderTheoryList();
+                    });
+                }
+            }
+            document.getElementById('addNewTheoryBtn').addEventListener('click',()=>{
+                let arr = getTheoryQuestions();
+                arr.push({ id:Date.now(), text:"New Theory Topic", subQuestions:["a) ...","b) ...","c) ..."], image:null });
+                saveTheoryQuestions(arr);
+                renderTheoryList();
+            });
+            document.getElementById('closeTheoryEditor').addEventListener('click',()=>{ document.body.removeChild(modal); });
+            renderTheoryList();
+        });
+        document.getElementById('saveObjInstBtn').addEventListener('click',()=>{
+            localStorage.setItem(STORAGE.INSTRUCTIONS_OBJ, document.getElementById('objInstEditor').value);
+            alert("Saved");
+        });
+        document.getElementById('saveTheoryInstBtn').addEventListener('click',()=>{
+            localStorage.setItem(STORAGE.INSTRUCTIONS_THEORY, document.getElementById('theoryInstEditor').value);
+            alert("Saved");
+        });
+        document.getElementById('logoutAdminBtn').addEventListener('click',()=>renderLogin());
+        refreshStudents();
+        refreshScores();
+    }
+
+      // ------------------------------- EXAM FLOW ---------------------------------
+    function clearAllIntervals() {
+        if(examInterval) clearInterval(examInterval);
+        if(instructionInterval) clearInterval(instructionInterval);
+    }
+
+    function startObjInstruction() {
+        clearAllIntervals();
+        instructionRemaining = 60;
+        timerDiv.style.display = 'flex';
+        timerDiv.innerText = "⏱️ 01:00";
+        const instText = getObjInstructions();
+        mainDiv.innerHTML = `
+            <div class="card">
+                <h2>📖 OBJECTIVE SECTION INSTRUCTIONS (1 min)</h2>
+                <div class="instruction-box">${escapeHtml(instText).replace(/\n/g,'<br>')}</div>
+                <div class="flex-between"><span>Auto-start: <strong id="instructionTimerSpan" style="font-size:1.8rem;">01:00</strong></span><button id="forceStartBtn" disabled>Start Now</button></div>
+            </div>
+        `;
+        instructionInterval = setInterval(()=>{
+            if(instructionRemaining<=0){ clearInterval(instructionInterval); startObjectiveExam(); }
+            else{
+                instructionRemaining--;
+                let mins = Math.floor(instructionRemaining/60);
+                let secs = instructionRemaining%60;
+                timerDiv.innerText = `⏱️ ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+                let span = document.getElementById('instructionTimerSpan');
+                if(span) span.innerText = timerDiv.innerText.slice(3);
+                if(instructionRemaining===0) startObjectiveExam();
+            }
+        },1000);
+        let check = setInterval(()=>{
+            if(instructionRemaining<=0){
+                let btn = document.getElementById('forceStartBtn');
+                if(btn){ btn.disabled=false; btn.innerText="Start Objective"; btn.style.background="#15803d"; btn.onclick=()=>{ clearInterval(instructionInterval); startObjectiveExam(); }; }
+                clearInterval(check);
+            }
+        },200);
+    }
+
+    function startObjectiveExam() {
+        clearAllIntervals();
+        let originalObj = getObjQuestions();
+        if(originalObj.length===0){ alert("No objective questions!"); renderLogin(); return; }
+        shuffledObjQuestions = shuffleArray([...originalObj]);
+        objAnswers = new Array(shuffledObjQuestions.length).fill(-1);
+        flaggedObj = new Array(shuffledObjQuestions.length).fill(false);
+        visitedObj = new Array(shuffledObjQuestions.length).fill(false);
+        currentObjIndex = 0;
+        visitedObj[0]=true;
+        objRemainingSec = 2400; // 40 min
+        examActive = true;
+        examSubmitted = false;
+        objCompleted = false;
+        timerDiv.style.display = 'flex';
+        updateObjTimerDisplay();
+        examInterval = setInterval(()=>{
+            if(!examActive || examSubmitted) return;
+            if(objRemainingSec<=0){ clearInterval(examInterval); submitObjectiveAndMoveToTheory(); }
+            else{ objRemainingSec--; updateObjTimerDisplay(); }
+        },1000);
+        renderObjectiveExam();
+        enforceFullscreenAntiCheat();
+    }
+
+    function updateObjTimerDisplay(){
+        let hrs = Math.floor(objRemainingSec/3600);
+        let mins = Math.floor((objRemainingSec%3600)/60);
+        let secs = objRemainingSec%60;
+        timerDiv.innerText = `⏱️ ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    }
+
+    function renderObjectiveExam(){
+        if(!examActive || examSubmitted) return;
+        const q = shuffledObjQuestions[currentObjIndex];
+        const selected = objAnswers[currentObjIndex];
+        mainDiv.innerHTML = `
+            <div id="examContainer">
+                <div class="flex-between"><h3>Objective Q${currentObjIndex+1}/${shuffledObjQuestions.length}</h3><div><span>🚩 <input type="checkbox" id="flagToggle" ${flaggedObj[currentObjIndex] ? 'checked':''}> Flag</span></div></div>
+                <div class="card">
+                    <div style="font-size:1.1rem;">${escapeHtml(q.text)}</div>
+                    ${q.image ? `<img src="${q.image}" class="question-image" alt="Diagram">` : ''}
+                    <div style="margin-top:20px;">${q.options.map((opt,i)=>`<div class="option ${selected===i ? 'selected':''}" data-optidx="${i}"><input type="radio" name="objAns" value="${i}" ${selected===i ? 'checked':''}><span>${String.fromCharCode(65+i)}. ${escapeHtml(opt)}</span></div>`).join('')}</div>
+                </div>
+                <div class="flex-between"><button id="prevBtn" ${currentObjIndex===0 ? 'disabled':''}>◀ Previous</button><button id="nextBtn" ${currentObjIndex===shuffledObjQuestions.length-1 ? 'disabled':''}>Next ▶</button><button id="submitObjBtn" class="btn-danger">Submit Objective & Continue</button></div>
+                <div class="card"><h4>Question Palette</h4><div class="question-nav" id="navCircles"></div></div>
+            </div>
+        `;
+        document.querySelectorAll('.option').forEach(div=>{
+            div.addEventListener('click',()=>{
+                let idx = parseInt(div.dataset.optidx);
+                objAnswers[currentObjIndex] = idx;
+                renderObjectiveExam();
+            });
+        });
+        document.getElementById('flagToggle')?.addEventListener('change',(e)=>{ flaggedObj[currentObjIndex]=e.target.checked; renderNavCircles(); });
+        document.getElementById('prevBtn')?.addEventListener('click',()=>{ if(currentObjIndex>0){ currentObjIndex--; visitedObj[currentObjIndex]=true; renderObjectiveExam(); } });
+        document.getElementById('nextBtn')?.addEventListener('click',()=>{ if(currentObjIndex<shuffledObjQuestions.length-1){ currentObjIndex++; visitedObj[currentObjIndex]=true; renderObjectiveExam(); } });
+        document.getElementById('submitObjBtn')?.addEventListener('click',()=>{ if(confirm("Submit objective section? You cannot go back.")) submitObjectiveAndMoveToTheory(); });
+        renderNavCircles();
+    }
+
+    function renderNavCircles(){
+        let nav = document.getElementById('navCircles');
+        if(!nav) return;
+        nav.innerHTML = shuffledObjQuestions.map((_,idx)=>{
+            let cls = 'q-circle';
+            if(idx===currentObjIndex) cls+=' active';
+            if(flaggedObj[idx]) cls+=' flagged';
+            else if(objAnswers[idx]!==-1) cls+=' answered';
+            return `<div class="${cls}" data-idx="${idx}">${idx+1}</div>`;
+        }).join('');
+        document.querySelectorAll('.q-circle').forEach(el=>{
+            el.addEventListener('click',()=>{
+                currentObjIndex = parseInt(el.dataset.idx);
+                visitedObj[currentObjIndex]=true;
+                renderObjectiveExam();
+            });
+        });
+    }
+
+    function submitObjectiveAndMoveToTheory() {
+        if(examSubmitted) return;
+        examSubmitted = true;
+        examActive = false;
+        clearInterval(examInterval);
+        let score = 0;
+        for(let i=0;i<shuffledObjQuestions.length;i++){
+            if(objAnswers[i] === shuffledObjQuestions[i].answer) score++;
+        }
+        const scores = getScores();
+        scores.push({ studentId: currentStudent.id, studentName: currentStudent.name, objectiveScore: score, timestamp: Date.now() });
+        saveScores(scores);
+        startTheoryInstruction();
+    }
+
+    function startTheoryInstruction() {
+        clearAllIntervals();
+        instructionRemaining = 60;
+        timerDiv.style.display = 'flex';
+        timerDiv.innerText = "⏱️ 01:00";
+        const instText = getTheoryInstructions();
+        mainDiv.innerHTML = `
+            <div class="card">
+                <h2>📖 THEORY SECTION INSTRUCTIONS (1 min)</h2>
+                <div class="instruction-box">${escapeHtml(instText).replace(/\n/g,'<br>')}</div>
+                <div class="flex-between"><span>Starts in: <strong id="theoryTimerSpan" style="font-size:1.8rem;">01:00</strong></span><button id="forceTheoryStart" disabled>Start Theory</button></div>
+            </div>
+        `;
+        instructionInterval = setInterval(()=>{
+            if(instructionRemaining<=0){ clearInterval(instructionInterval); startTheoryExam(); }
+            else{
+                instructionRemaining--;
+                let mins = Math.floor(instructionRemaining/60);
+                let secs = instructionRemaining%60;
+                timerDiv.innerText = `⏱️ ${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+                let span = document.getElementById('theoryTimerSpan');
+                if(span) span.innerText = timerDiv.innerText.slice(3);
+                if(instructionRemaining===0) startTheoryExam();
+            }
+        },1000);
+        let check = setInterval(()=>{
+            if(instructionRemaining<=0){
+                let btn = document.getElementById('forceTheoryStart');
+                if(btn){ btn.disabled=false; btn.innerText="Begin Theory"; btn.style.background="#15803d"; btn.onclick=()=>{ clearInterval(instructionInterval); startTheoryExam(); }; }
+                clearInterval(check);
+            }
+        },200);
+    }
+
+    function startTheoryExam() {
+        clearAllIntervals();
+        let originalTheory = getTheoryQuestions();
+        if(originalTheory.length===0){ alert("No theory questions!"); renderLogin(); return; }
+        shuffledTheoryQuestions = shuffleArray([...originalTheory]);
+        theoryRemainingSec = 3600; // 60 min
+        currentTheoryIndex = 0;
+        examActive = true;
+        examSubmitted = false;
+        timerDiv.style.display = 'flex';
+        updateTheoryTimerDisplay();
+        examInterval = setInterval(()=>{
+            if(!examActive || examSubmitted) return;
+            if(theoryRemainingSec<=0){ clearInterval(examInterval); finalizeExam("TIME EXPIRED - Theory auto-submitted"); }
+            else{ theoryRemainingSec--; updateTheoryTimerDisplay(); }
+        },1000);
+        renderTheoryExam();
+        enforceFullscreenAntiCheat();
+    }
+
+    function updateTheoryTimerDisplay(){
+        let hrs = Math.floor(theoryRemainingSec/3600);
+        let mins = Math.floor((theoryRemainingSec%3600)/60);
+        let secs = theoryRemainingSec%60;
+        timerDiv.innerText = `⏱️ ${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+    }
+
+    function renderTheoryExam(){
+        if(!examActive || examSubmitted) return;
+        const q = shuffledTheoryQuestions[currentTheoryIndex];
+        mainDiv.innerHTML = `
+            <div id="theoryContainer">
+                <div class="flex-between"><h3>Theory Question ${currentTheoryIndex+1} of ${shuffledTheoryQuestions.length}</h3><p style="color:#b45309;">(Answer any 4 questions on your answer sheet)</p></div>
+                <div class="card">
+                    <div style="font-size:1.1rem; font-weight:bold;">${escapeHtml(q.text)}</div>
+                    ${q.image ? `<img src="${q.image}" class="question-image" alt="Diagram">` : ''}
+                    <div class="theory-subq">${q.subQuestions.map(sub => `<div>${escapeHtml(sub)}</div>`).join('<br>')}</div>
+                    <div style="margin-top:20px; background:#fef3c7; padding:12px; border-radius:20px;">✍️ Write your answers on paper. Indicate question number and parts clearly.</div>
+                </div>
+                <div class="flex-between"><button id="theoryPrevBtn" ${currentTheoryIndex===0 ? 'disabled':''}>◀ Previous</button><button id="theoryNextBtn" ${currentTheoryIndex===shuffledTheoryQuestions.length-1 ? 'disabled':''}>Next ▶</button><button id="theorySubmitBtn" class="btn-danger">Submit Theory & Finish Exam</button></div>
+            </div>
+        `;
+        document.getElementById('theoryPrevBtn')?.addEventListener('click',()=>{ if(currentTheoryIndex>0){ currentTheoryIndex--; renderTheoryExam(); } });
+        document.getElementById('theoryNextBtn')?.addEventListener('click',()=>{ if(currentTheoryIndex<shuffledTheoryQuestions.length-1){ currentTheoryIndex++; renderTheoryExam(); } });
+        document.getElementById('theorySubmitBtn')?.addEventListener('click',()=>{ if(confirm("Submit theory section? Entire exam will end.")) finalizeExam("Submitted by candidate"); });
+    }
+    function finalizeExam(reason){
+        if(examSubmitted) return;
+        examSubmitted = true;
+        examActive = false;
+        clearInterval(examInterval);
+        if(antiCheatCleanup) antiCheatCleanup();
+        if(document.fullscreenElement) document.exitFullscreen();
+        timerDiv.style.display = 'none';
+        mainDiv.innerHTML = `
+            <div class="card" style="text-align:center;">
+                <h2>✅ EXAMINATION COMPLETED</h2>
+                <p><strong>${escapeHtml(currentStudent?.name)}</strong></p>
+                <p>Reason: ${reason}</p>
+                <p>Your objective score has been recorded. Only the admin can view it.</p>
+                <p><strong>You cannot retake unless the admin resets your record individually.</strong></p>
+                <button id="finalExitBtn" class="btn-success">Exit to Login</button>
+            </div>
+        `;
+        document.getElementById('finalExitBtn')?.addEventListener('click',()=>renderLogin());
+    }
+
+    // Anti-cheat
+    function enforceFullscreenAntiCheat() {
+        document.documentElement.requestFullscreen().catch(e=>console.warn);
+        const visHandler = ()=>{ if(examActive && !examSubmitted && document.hidden) finalizeExam("CHEATING: Tab/window switch"); };
+        const fsHandler = ()=>{ if(examActive && !examSubmitted && !document.fullscreenElement) finalizeExam("CHEATING: Exited fullscreen"); };
+        const keyBlock = (e)=>{ if(examActive && !examSubmitted && (e.key==='F12' || (e.ctrlKey && (e.key==='u'||e.key==='U'||e.key==='i'||e.key==='I')) || (e.ctrlKey && e.shiftKey && e.key==='I') || e.key==='Escape')){ e.preventDefault(); finalizeExam("CHEATING: Forbidden key"); } };
+        const ctxBlock = (e)=>{ if(examActive && !examSubmitted) e.preventDefault(); };
+        document.addEventListener('visibilitychange', visHandler);
+        document.addEventListener('fullscreenchange', fsHandler);
+        window.addEventListener('keydown', keyBlock);
+        document.addEventListener('contextmenu', ctxBlock);
+        window.addEventListener('beforeunload', (e)=>{ if(examActive && !examSubmitted){ e.preventDefault(); e.returnValue=""; finalizeExam("Page close"); } });
+        antiCheatCleanup = ()=>{ document.removeEventListener('visibilitychange',visHandler); document.removeEventListener('fullscreenchange',fsHandler); window.removeEventListener('keydown',keyBlock); document.removeEventListener('contextmenu',ctxBlock); };
+    }
+
+    renderLogin();
+</script>
+</body>
+</html>
